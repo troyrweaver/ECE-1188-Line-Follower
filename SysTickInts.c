@@ -59,3 +59,41 @@ void SysTick_Init(uint32_t period, uint32_t priority){
   SysTick->CTRL = 0x00000007;     // 4) enable SysTick with core clock and interrupts
 }
 
+void SysTick_Wait(uint32_t delay){
+  // method #1: set Reload Value Register, clear Current Value Register, poll COUNTFLAG in Control and Status Register
+  if(delay <= 1){
+    // without this step:
+    // if delay == 0, this function will wait 0x00FFFFFF cycles
+    // if delay == 1, this function will never return (because COUNTFLAG is set on 1->0 transition)
+    return;                   // do nothing; at least 1 cycle has already passed anyway
+  }
+  SysTick->LOAD = (delay - 1);// count down to zero
+  SysTick->VAL = 0;          // any write to CVR clears it and COUNTFLAG in CSR
+  while(( SysTick->CTRL&0x00010000) == 0){};
+  // method #2: repeatedly evaluate elapsed time
+/*  volatile uint32_t elapsedTime;
+  uint32_t startTime = SYSTICK->VAL;
+  do{
+    elapsedTime = (startTime-SYSTICK->VAL)&0x00FFFFFF;
+  }
+  while(elapsedTime <= delay);*/
+}
+
+
+// Time delay using busy wait.
+// assumes 48 MHz bus clock
+void SysTick_Wait10ms(uint32_t delay){
+  uint32_t i;
+  for(i=0; i<delay; i++){
+    SysTick_Wait(480000);  // wait 10ms (assumes 48 MHz clock)
+  }
+}
+
+
+void SysTick_Wait1us(uint32_t delay){
+    // SysTick_Wait assumes 48 MHz bus clock
+    uint32_t i;
+    for (i = 0; i < delay; i++) {
+        SysTick_Wait(48);
+    }
+}
