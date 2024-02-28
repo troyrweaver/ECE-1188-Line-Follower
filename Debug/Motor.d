@@ -1,6 +1,6 @@
 # FIXED
 
-Motor.obj: C:/ti/tirslk_max_1_00_02/inc/Motor.c
+Motor.obj: ../Motor.c
 Motor.obj: C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdint.h
 Motor.obj: C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/_ti_config.h
 Motor.obj: C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/linkage.h
@@ -19,10 +19,10 @@ Motor.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/CMSIS/core_cm4.h
 Motor.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/CMSIS/cmsis_compiler.h
 Motor.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/CMSIS/cmsis_ccs.h
 Motor.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/system_msp432p401r.h
-Motor.obj: C:/ti/tirslk_max_1_00_02/inc/CortexM.h
-Motor.obj: C:/ti/tirslk_max_1_00_02/inc/PWM.h
+Motor.obj: ../../inc/CortexM.h
+Motor.obj: ../../inc/PWM.h
 
-C:/ti/tirslk_max_1_00_02/inc/Motor.c:
+../Motor.c:
 
 C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdint.h:
 
@@ -60,7 +60,7 @@ C:/ti/ccs1260/ccs/ccs_base/arm/include/CMSIS/cmsis_ccs.h:
 
 C:/ti/ccs1260/ccs/ccs_base/arm/include/system_msp432p401r.h:
 
-C:/ti/tirslk_max_1_00_02/inc/CortexM.h:
+../../inc/CortexM.h:
 
-C:/ti/tirslk_max_1_00_02/inc/PWM.h:
+../../inc/PWM.h:
 

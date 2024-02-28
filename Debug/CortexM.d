@@ -1,6 +1,6 @@
 # FIXED
 
-CortexM.obj: C:/ti/tirslk_max_1_00_02/inc/CortexM.c
+CortexM.obj: ../CortexM.c
 CortexM.obj: C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdint.h
 CortexM.obj: C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/_ti_config.h
 CortexM.obj: C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/linkage.h
@@ -12,7 +12,7 @@ CortexM.obj: C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/mach
 CortexM.obj: C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/machine/_stdint.h
 CortexM.obj: C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/sys/_stdint.h
 
-C:/ti/tirslk_max_1_00_02/inc/CortexM.c:
+../CortexM.c:
 
 C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdint.h:
 

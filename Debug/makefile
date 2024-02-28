@@ -13,15 +13,11 @@ ORDERED_OBJS += \
 "./BumpInt.obj" \
 "./Clock.obj" \
 "./CortexM.obj" \
-"./FlashProgram.obj" \
-"./Lab14_EdgeInterruptsmain.obj" \
+"./FSM_Main.obj" \
 "./LaunchPad.obj" \
 "./Motor.obj" \
-"./PWM.obj" \
 "./Reflectance.obj" \
 "./SysTickInts.obj" \
-"./TExaS.obj" \
-"./TimerA1.obj" \
 "./startup_msp432p401r_ccs.obj" \
 "./system_msp432p401r.obj" \
 "../msp432p401r.cmd" \
@@ -154,8 +150,8 @@ Yoshi_LineFollower.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "BumpInt.obj" "Clock.obj" "CortexM.obj" "FlashProgram.obj" "Lab14_EdgeInterruptsmain.obj" "LaunchPad.obj" "Motor.obj" "PWM.obj" "Reflectance.obj" "SysTickInts.obj" "TExaS.obj" "TimerA1.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" 
-	-$(RM) "BumpInt.d" "Clock.d" "CortexM.d" "FlashProgram.d" "Lab14_EdgeInterruptsmain.d" "LaunchPad.d" "Motor.d" "PWM.d" "Reflectance.d" "SysTickInts.d" "TExaS.d" "TimerA1.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" 
+	-$(RM) "BumpInt.obj" "Clock.obj" "CortexM.obj" "FSM_Main.obj" "LaunchPad.obj" "Motor.obj" "Reflectance.obj" "SysTickInts.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" 
+	-$(RM) "BumpInt.d" "Clock.d" "CortexM.d" "FSM_Main.d" "LaunchPad.d" "Motor.d" "Reflectance.d" "SysTickInts.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

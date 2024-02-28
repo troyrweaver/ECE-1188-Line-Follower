@@ -1,6 +1,6 @@
 # FIXED
 
-BumpInt.obj: C:/ti/tirslk_max_1_00_02/inc/BumpInt.c
+BumpInt.obj: ../BumpInt.c
 BumpInt.obj: C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdint.h
 BumpInt.obj: C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/_ti_config.h
 BumpInt.obj: C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/linkage.h
@@ -20,7 +20,7 @@ BumpInt.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/CMSIS/cmsis_compiler.h
 BumpInt.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/CMSIS/cmsis_ccs.h
 BumpInt.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/system_msp432p401r.h
 
-C:/ti/tirslk_max_1_00_02/inc/BumpInt.c:
+../BumpInt.c:
 
 C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdint.h:
 
