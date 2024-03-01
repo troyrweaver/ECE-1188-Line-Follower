@@ -62,7 +62,13 @@ policies, either expressed or implied, of the FreeBSD Project.
 // control is uninitialized.
 // Input: none
 // Output: none
+uint32_t FREQ = 10000;  //  PWM Frequency = 100 Hz or 10000 delay on SysTick_Wait1us()
+uint32_t H, L;          //  Duty Cycle Calc Variables
+                        //  From Motor_Simple.c
+                        //  H = duty;
+                        //  L = FREQ - H;
 void Motor_Init(void){
+<<<<<<< Updated upstream
     // Initializes the 6 GPIO lines and puts driver to sleep
 
     //For PH (directions for both motors)
@@ -88,6 +94,38 @@ void Motor_Init(void){
 
     //Put motors to sleep
     P3->OUT &= ~0xC0;
+=======
+  // MotorSimple.c Motor_InitSimple(void) reference
+  // Initializes the 6 GPIO lines and puts driver to sleep
+  // Returns right away
+  // initialize P5.4 and P5.5 and make them outputs
+
+  // GPIO I care about are split between Port 2 (PWM), Port 3 (Motor SLEEP), and Port 5 (Motor Direction)
+  // GPIO x.4 and x.7 are LEFT
+  // GPIO x.5 and x.6 are RIGHT
+  // GPIO 2.7 and 2.6;  PWM
+  // GPIO 3.7 and 3.6;  SLEEP
+  // GPIO 5.4 and 5.5;  DIRECTION
+
+    P2->SEL1 &= ~0xC0; // 1100 0000b = 0x 12 0 = 0xC0;
+    P2->SEL0 &= ~0xC0;
+    P3->SEL1 &= ~0xC0; // same as port 2
+    P3->SEL0 &= ~0xC0;
+    P5->SEL1 &= ~0x30; // 0011 0000b = 0x30
+    P5->SEL0 &= ~0x30;
+
+    P2->DIR |= 0xC0;  //  Configure all ports at outputs
+    P3->DIR |= 0xC0;
+    P5->DIR |= 0x30;
+
+    P2->DS |= 0xC0;
+
+    P2->OUT &= ~0xC0; //  All pins to H Bridge Driver low
+    P3->OUT &= ~0xC0;
+    P5->OUT &= ~0x30;
+
+    //Probably need to initialize Timer_A 1 and 2 module either here or in Timer_A.c file
+>>>>>>> Stashed changes
 
 }
 
@@ -96,12 +134,24 @@ void Motor_Init(void){
 // set the PWM speed control to 0% duty cycle.
 // Input: none
 // Output: none
+<<<<<<< Updated upstream
 void Motor_Stop(void){
     // Stops both motors, puts driver to sleep
     // Returns right away
     P1->OUT &= ~0xC0;
     P2->OUT &= ~0xC0;//off
     P3->OUT &= ~0xC0;//sleep mode
+=======
+void Motor_Stop(void)
+{
+  //  MotorSimple.c Motor_Stop(void) reference
+  //  Stops both motors, puts driver to sleep
+  //  Returns right away
+    P1->OUT &= ~0xC0;
+    P2->OUT &= ~0xC0;   // off
+    P3->OUT &= ~0xC0;   // low current sleep mode  
+
+>>>>>>> Stashed changes
 }
 
 // ------------Motor_Forward------------
@@ -112,6 +162,7 @@ void Motor_Stop(void){
 //        rightDuty duty cycle of right wheel (0 to 14,998)
 // Output: none
 // Assumes: Motor_Init() has been called
+<<<<<<< Updated upstream
 void Motor_Forward(uint16_t duty, uint32_t time){
     // Drives both motors forward at duty (100 to 9900)
     // Runs for time duration (units=10ms), and then stops
@@ -129,6 +180,18 @@ void Motor_Forward(uint16_t duty, uint32_t time){
         SysTick_Wait1us(off);//PWM low
         count-=1; //decrement time
     }
+=======
+void Motor_Forward(uint16_t leftDuty, uint16_t rightDuty)
+//helloooooo
+{
+  //  Something to consider for all the motor movement functions:
+  //  Since these functions are set up to only send duty cycle to each motor rather than duty cycle 
+  //  and wait time like the Motor_Simple lab, we basically can choose what PWM frequency we want to 
+  //  run at instead of picking 100 Hz arbitrarily like in the Motor_Simple.c lab
+  //  Say we can run PWM at 500 Hz instead for more responsiveness
+
+  //  For right now, assume to run at 100 Hz
+>>>>>>> Stashed changes
 }
 
 // ------------Motor_Right------------
@@ -139,10 +202,22 @@ void Motor_Forward(uint16_t duty, uint32_t time){
 //        rightDuty duty cycle of right wheel (0 to 14,998)
 // Output: none
 // Assumes: Motor_Init() has been called
+<<<<<<< Updated upstream
 void Motor_Right(uint16_t duty, uint32_t time){
     // Drives just the right motor forward at duty (100 to 9900)
     // Left motor is stopped (sleeping)
     // Runs for time duration (units=10ms), and then stops
+=======
+void Motor_Right(uint16_t leftDuty, uint16_t rightDuty)
+{
+  //  Something to consider for all the motor movement functions:
+  //  Since these functions are set up to only send duty cycle to each motor rather than duty cycle 
+  //  and wait time like the Motor_Simple lab, we basically can choose what PWM frequency we want to 
+  //  run at instead of picking 100 Hz arbitrarily like in the Motor_Simple.c lab
+  //  Say we can run PWM at 500 Hz instead for more responsiveness
+
+  //  For right now, assume to run at 100 Hz  
+>>>>>>> Stashed changes
 
     P3->OUT &= ~0x80; //sleep left motor
     P3->OUT |= 0x40; //wake up right motor
@@ -170,6 +245,7 @@ void Motor_Right(uint16_t duty, uint32_t time){
 //        rightDuty duty cycle of right wheel (0 to 14,998)
 // Output: none
 // Assumes: Motor_Init() has been called
+<<<<<<< Updated upstream
 void Motor_Left(uint16_t duty, uint32_t time){
     // Drives just the left motor forward at duty (100 to 9900)
     // Right motor is stopped (sleeping)
@@ -189,6 +265,17 @@ void Motor_Left(uint16_t duty, uint32_t time){
         SysTick_Wait1us(off); //PWM low
         count-=1; //decrement time
        }
+=======
+void Motor_Left(uint16_t leftDuty, uint16_t rightDuty)
+{
+  //  Something to consider for all the motor movement functions:
+  //  Since these functions are set up to only send duty cycle to each motor rather than duty cycle 
+  //  and wait time like the Motor_Simple lab, we basically can choose what PWM frequency we want to 
+  //  run at instead of picking 100 Hz arbitrarily like in the Motor_Simple.c lab
+  //  Say we can run PWM at 500 Hz instead for more responsiveness
+
+  //  For right now, assume to run at 100 Hz
+>>>>>>> Stashed changes
 }
 
 // ------------Motor_Backward------------
@@ -199,6 +286,7 @@ void Motor_Left(uint16_t duty, uint32_t time){
 //        rightDuty duty cycle of right wheel (0 to 14,998)
 // Output: none
 // Assumes: Motor_Init() has been called
+<<<<<<< Updated upstream
 void Motor_Backward(uint16_t duty, uint32_t time){
     // Drives both motors backward at duty (100 to 9900)
     // Runs for time duration (units=10ms), and then stops
@@ -216,5 +304,15 @@ void Motor_Backward(uint16_t duty, uint32_t time){
           SysTick_Wait1us(off); //PWM low
           count-=1; //decrement time
         }
+=======
+void Motor_Backward(uint16_t leftDuty, uint16_t rightDuty)
+{
+  //  Something to consider for all the motor movement functions:
+  //  Since these functions are set up to only send duty cycle to each motor rather than duty cycle 
+  //  and wait time like the Motor_Simple lab, we basically can choose what PWM frequency we want to 
+  //  run at instead of picking 100 Hz arbitrarily like in the Motor_Simple.c lab
+  //  Say we can run PWM at 500 Hz instead for more responsiveness
+>>>>>>> Stashed changes
 
+  //  For right now, assume to run at 100 Hz
 }
