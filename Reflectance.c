@@ -129,28 +129,6 @@ uint8_t Reflectance_Read(uint32_t time){
     return result;
 }
 
-// ------------Reflectance_Center------------
-// Read the two center sensors
-// Turn on the 8 IR LEDs
-// Pulse the 8 sensors high for 10 us
-// Make the sensor pins input
-// wait t us
-// Read sensors
-// Turn off the 8 IR LEDs
-// Input: time to wait in usec
-// Output: 0 (off road), 1 off to left, 2 off to right, 3 on road
-// (Left,Right) Sensors
-// 1,1          both sensors   on line
-// 0,1          just right     off to left
-// 1,0          left left      off to right
-// 0,0          neither        lost
-// Assumes: Reflectance_Init() has been called
-uint8_t Reflectance_Center(uint32_t time){
-    // write this as part of Lab 6
-  return 0; // replace this line
-}
-
-
 // Perform sensor integration
 // Input: data is 8-bit result from line sensor
 // Output: position in 0.1mm relative to center of line
@@ -177,9 +155,24 @@ int32_t Reflectance_Position(uint8_t data){
 
     position = numerator/denominator; //answer of the weighted average equation
 
+    /*/ Lost
+    if(position == 0)
+        return 0x3;*/
 
-    //um to mm conversion
-    return position*0.001;
+    // Go forward
+    if(position > -10000 && position < 10000)
+        return 0x0;
+
+    // Go Left
+    if(position > 10000 && position < 20000)
+        return 0x2;
+
+    // Go right
+    if(position < -10000 && position > -20000)
+        return 0x1;
+
+    else
+        return 0x3;
 }
 
 
@@ -214,4 +207,3 @@ uint8_t Reflectance_End(void){
     P7->OUT = ~0xFF;//turn off all 7 IR LEDs with QTRX mask
     return P7->IN;//return read in results from LEDs
 }
-

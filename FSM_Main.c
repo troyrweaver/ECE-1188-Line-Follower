@@ -1,80 +1,88 @@
-// Lab14_EdgeInterruptsmain.c
-// Runs on MSP432, interrupt version
-// Main test program for interrupt driven bump switches the robot.
-// Daniel Valvano and Jonathan Valvano
-// July 11, 2019
-
-/* This example accompanies the book
-   "Embedded Systems: Introduction to Robotics,
-   Jonathan W. Valvano, ISBN: 9781074544300, copyright (c) 2019
- For more information about my classes, my research, and my books, see
- http://users.ece.utexas.edu/~valvano/
-
-Simplified BSD License (FreeBSD License)
-Copyright (c) 2019, Jonathan Valvano, All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice,
-   this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
-AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-The views and conclusions contained in the software and documentation are
-those of the authors and should not be interpreted as representing official
-policies, either expressed or implied, of the FreeBSD Project.
-*/
-
-// Negative logic bump sensors
-// P4.7 Bump5, left side of robot
-// P4.6 Bump4
-// P4.5 Bump3
-// P4.3 Bump2
-// P4.2 Bump1
-// P4.0 Bump0, right side of robot
-
-#include <stdint.h>
 #include "msp.h"
+#include "../inc/Reflectance.h"
 #include "../inc/Clock.h"
-#include "../inc/CortexM.h"
-#include "../inc/LaunchPad.h"
 #include "../inc/Motor.h"
+#include "../inc/LaunchPad.h"
+#include "../inc/SysTickInts.h"
+#include "../inc/CortexM.h"
 #include "../inc/BumpInt.h"
-#include "../inc/TExaS.h"
-#include "../inc/TimerA1.h"
-#include "../inc/FlashProgram.h"
 
-uint8_t CollisionData, CollisionFlag;  // mailbox
-void HandleCollision(uint8_t bumpSensor){
-   Motor_Stop();
-   CollisionData = bumpSensor;
-   CollisionFlag = 1;
-}
+void motorState(uint8_t state);
+void SysTick_Handler(void);
 
+struct State {
+  uint32_t out;//2-bit output
+  const struct State *next[4]; // Next if 2-bit input is 0-3
+};
+typedef const struct State State_t;
 
+#define Center   &fsm[0]
+#define Left     &fsm[1]
+#define Right    &fsm[2]
+//#define Lost     &fsm[4]
+
+State_t fsm[4]={
+    {0x1, {Right, Left, Right, Center}},   // Center
+    {0x2, {Left, Center, Right, Center}},   // Left
+    {0x3, { Right, Left,   Center, Center}},   // Right
+  //  {0x4, { }},     // Lost
+};
+
+State_t *StatePtr;  // pointer to the current state
+uint8_t Input;
+uint8_t Output;
+volatile uint8_t refl_data;
 
 int main(void){
-  DisableInterrupts();
-  Clock_Init48MHz();   // 48 MHz clock; 12 MHz Timer A clock
+  Clock_Init48MHz();
+  Motor_Init();
+  Reflectance_Init();
+  SysTick_Init(48000, 2);
+  LaunchPad_Init();
+ // BumpInt_Init(parameter);
 
-// write this as part of Lab 14, section 14.4.4 Integrated Robotic System
+  StatePtr = Center;
+
   EnableInterrupts();
-  while(1){
-    WaitForInterrupt();
-    //  GitHub Repo Clones fine on my end lol 
-  }
+
+  while(1)
+      WaitForInterrupt();
+}
+
+void motorState(uint8_t state) {
+    switch(state){
+        case 0x1:
+            Motor_Forward(3000, 3000); // Center
+            break;
+        case 0x2:
+            Motor_Left(0, 2000); // Left
+            break;
+        case 0x3:
+            Motor_Right(2000, 0); // Right
+            break;
+        case 0x4:
+            Motor_Stop(); // Lost
+            break;
+        default:
+            break;
+    }
+}
+
+void SysTick_Handler(void){
+    volatile static uint8_t count = 0;
+
+    if(count == 0)
+        Reflectance_Start();
+
+    else if(count == 1) {
+        Input = Reflectance_Position(Reflectance_End());
+        StatePtr = StatePtr->next[Input];
+        Output = StatePtr->out;
+        motorState(Output);
+    }
+
+    count++;
+    if(count == 10)
+        count = 0;
 }
 
