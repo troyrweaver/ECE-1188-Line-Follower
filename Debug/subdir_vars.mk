@@ -15,6 +15,7 @@ C_SRCS += \
 ../FSM_Main.c \
 ../LaunchPad.c \
 ../Motor.c \
+../PWM.c \
 ../Reflectance.c \
 ../SysTickInts.c \
 ../startup_msp432p401r_ccs.c \
@@ -27,6 +28,7 @@ C_DEPS += \
 ./FSM_Main.d \
 ./LaunchPad.d \
 ./Motor.d \
+./PWM.d \
 ./Reflectance.d \
 ./SysTickInts.d \
 ./startup_msp432p401r_ccs.d \
@@ -39,6 +41,7 @@ OBJS += \
 ./FSM_Main.obj \
 ./LaunchPad.obj \
 ./Motor.obj \
+./PWM.obj \
 ./Reflectance.obj \
 ./SysTickInts.obj \
 ./startup_msp432p401r_ccs.obj \
@@ -51,6 +54,7 @@ OBJS__QUOTED += \
 "FSM_Main.obj" \
 "LaunchPad.obj" \
 "Motor.obj" \
+"PWM.obj" \
 "Reflectance.obj" \
 "SysTickInts.obj" \
 "startup_msp432p401r_ccs.obj" \
@@ -63,6 +67,7 @@ C_DEPS__QUOTED += \
 "FSM_Main.d" \
 "LaunchPad.d" \
 "Motor.d" \
+"PWM.d" \
 "Reflectance.d" \
 "SysTickInts.d" \
 "startup_msp432p401r_ccs.d" \
@@ -75,6 +80,7 @@ C_SRCS__QUOTED += \
 "../FSM_Main.c" \
 "../LaunchPad.c" \
 "../Motor.c" \
+"../PWM.c" \
 "../Reflectance.c" \
 "../SysTickInts.c" \
 "../startup_msp432p401r_ccs.c" \

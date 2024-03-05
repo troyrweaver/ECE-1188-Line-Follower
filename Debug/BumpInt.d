@@ -19,6 +19,7 @@ BumpInt.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/CMSIS/core_cm4.h
 BumpInt.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/CMSIS/cmsis_compiler.h
 BumpInt.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/CMSIS/cmsis_ccs.h
 BumpInt.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/system_msp432p401r.h
+BumpInt.obj: ../../inc/Motor.h
 
 ../BumpInt.c:
 
@@ -57,4 +58,6 @@ C:/ti/ccs1260/ccs/ccs_base/arm/include/CMSIS/cmsis_compiler.h:
 C:/ti/ccs1260/ccs/ccs_base/arm/include/CMSIS/cmsis_ccs.h:
 
 C:/ti/ccs1260/ccs/ccs_base/arm/include/system_msp432p401r.h:
+
+../../inc/Motor.h:
 

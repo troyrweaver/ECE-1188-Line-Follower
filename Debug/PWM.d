@@ -1,6 +1,6 @@
 # FIXED
 
-PWM.obj: C:/ti/tirslk_max_1_00_02/inc/PWM.c
+PWM.obj: ../PWM.c
 PWM.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/msp.h
 PWM.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/msp432p401r.h
 PWM.obj: C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdint.h
@@ -20,7 +20,7 @@ PWM.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/CMSIS/cmsis_compiler.h
 PWM.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/CMSIS/cmsis_ccs.h
 PWM.obj: C:/ti/ccs1260/ccs/ccs_base/arm/include/system_msp432p401r.h
 
-C:/ti/tirslk_max_1_00_02/inc/PWM.c:
+../PWM.c:
 
 C:/ti/ccs1260/ccs/ccs_base/arm/include/msp.h:
 

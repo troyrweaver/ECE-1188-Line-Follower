@@ -4,7 +4,7 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := C:/ti/ccs1250/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS
+CG_TOOL_ROOT := C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -16,6 +16,7 @@ ORDERED_OBJS += \
 "./FSM_Main.obj" \
 "./LaunchPad.obj" \
 "./Motor.obj" \
+"./PWM.obj" \
 "./Reflectance.obj" \
 "./SysTickInts.obj" \
 "./startup_msp432p401r_ccs.obj" \
@@ -143,15 +144,15 @@ all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 Yoshi_LineFollower.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: ARM Linker'
-	"C:/ti/ccs1250/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --advice:power=all --define=__MSP432P401R__ --define=ccs -g --c99 --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"Yoshi_LineFollower.map" --heap_size=1024 --stack_size=512 -i"C:/ti/ccs1250/ccs/ccs_base/arm/include" -i"C:/ti/ccs1250/ccs/ccs_base/arm/include" -i"C:/ti/ccs1250/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/lib" -i"C:/ti/ccs1250/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="Yoshi_LineFollower_linkInfo.xml" --rom_model -o "Yoshi_LineFollower.out" $(ORDERED_OBJS)
+	"C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --advice:power=all --define=__MSP432P401R__ --define=ccs -g --c99 --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"Yoshi_LineFollower.map" --heap_size=1024 --stack_size=512 -i"C:/ti/ccs1260/ccs/ccs_base/arm/include" -i"C:/ti/ccs1260/ccs/ccs_base/arm/include" -i"C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/lib" -i"C:/ti/ccs1260/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="Yoshi_LineFollower_linkInfo.xml" --rom_model -o "Yoshi_LineFollower.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "BumpInt.obj" "Clock.obj" "CortexM.obj" "FSM_Main.obj" "LaunchPad.obj" "Motor.obj" "Reflectance.obj" "SysTickInts.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" 
-	-$(RM) "BumpInt.d" "Clock.d" "CortexM.d" "FSM_Main.d" "LaunchPad.d" "Motor.d" "Reflectance.d" "SysTickInts.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" 
+	-$(RM) "BumpInt.obj" "Clock.obj" "CortexM.obj" "FSM_Main.obj" "LaunchPad.obj" "Motor.obj" "PWM.obj" "Reflectance.obj" "SysTickInts.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" 
+	-$(RM) "BumpInt.d" "Clock.d" "CortexM.d" "FSM_Main.d" "LaunchPad.d" "Motor.d" "PWM.d" "Reflectance.d" "SysTickInts.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

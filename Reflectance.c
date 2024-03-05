@@ -155,21 +155,33 @@ int32_t Reflectance_Position(uint8_t data){
 
     position = numerator/denominator; //answer of the weighted average equation
 
-    /*/ Lost
-    if(position == 0)
-        return 0x3;*/
+    //THESE IF STATEMENTS APPARENTLY USE LOTS OF OVERHEAD, I WAS TOLD NOT TO USE THIS FUNCTION AT ALL?
+    //IDK IF THATS POSSIBLE, MAYBE CHANGE? IF NOT, WHO CARES!
+    //VALUES COULD BE TUNED BETTER FORSURE!!!!!!
 
-    // Go forward
+    //lost THIS IS FUCKED UP!!! CAUSES ROBOT TO STOP MID TRACK SOMETIMES, MAYBE CHANGE?
+    if(position == 0)
+        return 0x3;
+
+    //forward
     if(position > -10000 && position < 10000)
         return 0x0;
 
-    // Go Left
+    //left
     if(position > 10000 && position < 20000)
         return 0x2;
 
-    // Go right
+    //right
     if(position < -10000 && position > -20000)
         return 0x1;
+
+    //hard right
+    if(position > 20000)
+        return 0x5;
+
+    //hard left
+    if(position < -20000)
+        return 0x4;
 
     else
         return 0x3;

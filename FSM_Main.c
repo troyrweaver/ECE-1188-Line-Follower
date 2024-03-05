@@ -9,29 +9,43 @@
 
 void motorState(uint8_t state);
 void SysTick_Handler(void);
+//void bump(uint8_t);
 
 struct State {
   uint32_t out;//2-bit output
-  const struct State *next[4]; // Next if 2-bit input is 0-3
+  const struct State *next[6]; // Next if 2-bit input is 0-3
 };
 typedef const struct State State_t;
 
-#define Center   &fsm[0]
-#define Left     &fsm[1]
-#define Right    &fsm[2]
-//#define Lost     &fsm[4]
+#define Center    &fsm[0]
+#define Left      &fsm[1]
+#define Right     &fsm[2]
+#define LookF     &fsm[3]
+#define LookB     &fsm[4]
+#define LookR     &fsm[5]
+#define LookL     &fsm[6]
+#define Lost      &fsm[7]
+#define FastL     &fsm[8]
+#define FastR     &fsm[9]
 
-State_t fsm[4]={
-    {0x1, {Right, Left, Right, Center}},   // Center
-    {0x2, {Left, Center, Right, Center}},   // Left
-    {0x3, { Right, Left,   Center, Center}},   // Right
-  //  {0x4, { }},     // Lost
+State_t fsm[10]={ //THE ORDER OF THESE COULD MAYBE BE CHANGED?
+
+    {0x1, {Center, Left, Right, LookF, FastL, FastR }}, //same order as states defined above^^^^^
+    {0x2, {Center, Left, Right, LookF, FastL, FastR  }},
+    {0x3, {Center, Left, Right, LookF, FastL, FastR }},
+    {0x4, {Center, Left, Right, LookB, FastL, FastR }},
+    {0x5, {Center, Left, Right, LookL, FastL, FastR }},
+    {0x6, {Center, Left, Right, LookR, FastL, FastR }},
+    {0x7, {Center, Left, Right, Lost,  FastL, FastR }},
+    {0x8, {Lost,   Lost, Lost,  Lost,  Lost, Lost }},
+    {0x9, {Center, Left, Right, LookF, FastL, FastR }},
+    {0xA, {Center, Left, Right, LookF, FastL, FastR  }}
 };
 
 State_t *StatePtr;  // pointer to the current state
 uint8_t Input;
 uint8_t Output;
-volatile uint8_t refl_data;
+volatile uint8_t data;
 
 int main(void){
   Clock_Init48MHz();
@@ -39,7 +53,7 @@ int main(void){
   Reflectance_Init();
   SysTick_Init(48000, 2);
   LaunchPad_Init();
- // BumpInt_Init(parameter);
+//  BumpInt_Init(&bump);
 
   StatePtr = Center;
 
@@ -52,21 +66,58 @@ int main(void){
 void motorState(uint8_t state) {
     switch(state){
         case 0x1:
-            Motor_Forward(3000, 3000); // Center
+            Motor_Forward(3000, 3000);//center
             break;
         case 0x2:
-            Motor_Left(0, 2000); // Left
+            Motor_Left(0, 2000);//left
             break;
         case 0x3:
-            Motor_Right(2000, 0); // Right
+            Motor_Right(2000, 0);//right
             break;
         case 0x4:
-            Motor_Stop(); // Lost
+            Motor_Forward(3000, 3000); //look forward
+            Clock_Delay1ms(50);
+            break;
+        case 0x5:
+            Motor_Backward(3000, 3000); //look backward
+            Clock_Delay1ms(100);
+            break;
+        case 0x6:
+            Motor_Left(3000, 3000); //look left
+            Clock_Delay1ms(150);
+            break;
+        case 0x7:
+            Motor_Right(3000, 3000); //look right
+            Clock_Delay1ms(300);
+        case 0x8:
+            Motor_Stop(); //lost FUCKED UP, MAYBE WAIT A LITTLE BEFORE SHUTTING OFF MOTOR?
+            break;
+        case 0x9:
+            Motor_Left(3000, 3000); //fast turn left
+            break;
+        case 0xA:
+            Motor_Right(3000, 3000); //fast turn right
             break;
         default:
             break;
     }
 }
+
+//CANT GET THIS TO WORK, I AM CLOSE!!! BUMP SENSORS HAVE TO WORK AND STOP MOTOR
+/*void bump(uint8_t bump){ FUCKED UP!!!
+    switch(bump){
+    case BIT0:
+    case BIT2:
+    case BIT3:
+    case BIT5:
+    case BIT6:
+    case BIT7:
+        Motor_Stop();
+        break;
+    default:
+        break;
+    }
+}*/
 
 void SysTick_Handler(void){
     volatile static uint8_t count = 0;
@@ -75,10 +126,11 @@ void SysTick_Handler(void){
         Reflectance_Start();
 
     else if(count == 1) {
-        Input = Reflectance_Position(Reflectance_End());
-        StatePtr = StatePtr->next[Input];
-        Output = StatePtr->out;
-        motorState(Output);
+                data = Reflectance_End();
+                Input = Reflectance_Position(data);
+                StatePtr = StatePtr->next[Input];
+                Output = StatePtr->out;
+                motorState(Output);
     }
 
     count++;
