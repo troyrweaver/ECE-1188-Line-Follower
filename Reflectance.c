@@ -141,19 +141,19 @@ int32_t Reflectance_Position(uint8_t data){
     int32_t w[8] = {-33400, -23800, -14300, -4800,
                     4800,   14300,  23800,  33400};
 
-    int32_t numerator = 0; //numerator of distance equation
-    int32_t denominator = 0; //denominator of distance equation
-    uint8_t bi = 0; //binary states
+    int32_t numerator = 0;                  //numerator of distance equation
+    int32_t denominator = 0;                //denominator of distance equation
+    uint8_t bi = 0;                         //binary states
 
     //loop allows for summation of the numerator and denominator
     for(uint32_t i = 0 ; i < 8; i++)
     {
-        bi = 0b1 << i; //each of the discrete binary states will be looped through via bit shifting
-        numerator += (data & bi) * w[7-i]; //summation of the product between (binary states anded with the sensor data) and the distance of each sensor
-        denominator += (data & bi); //summation of the binary states anded with the sensor data
+        bi = 0b1 << i;                      //each of the discrete binary states will be looped through via bit shifting
+        numerator += (data & bi) * w[7-i];  //summation of the product between (binary states anded with the sensor data) and the distance of each sensor
+        denominator += (data & bi);         //summation of the binary states anded with the sensor data
     }
 
-    position = numerator/denominator; //answer of the weighted average equation
+    position = numerator/denominator;       //answer of the weighted average equation
 
     //THESE IF STATEMENTS APPARENTLY USE LOTS OF OVERHEAD, I WAS TOLD NOT TO USE THIS FUNCTION AT ALL?
     //IDK IF THATS POSSIBLE, MAYBE CHANGE? IF NOT, WHO CARES!
