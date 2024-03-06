@@ -42,24 +42,26 @@ typedef const struct State State_t;
 
 State_t fsm[10]={ //THE ORDER OF THESE COULD MAYBE BE CHANGED?
 
-    {0x1, 0x07, 0x00, {Center, Left, Right, LookF, FastL, FastR }},     //Center;  White;       Off        same order as states defined above^^^^^
-    {0x2, 0x01, 0x00, {Center, Left, Right, LookF, FastL, FastR }},     //Left;    Red;         Off
-    {0x3, 0x04, 0x00, {Center, Left, Right, LookF, FastL, FastR }},     //Right;   Blue;        Off
-    {0x4, 0x01, 0x01, {Center, Left, Right, LookB, FastL, FastR }},     //LookF;   Red;         On
-    {0x5, 0x02, 0x01, {Center, Left, Right, LookL, FastL, FastR }},     //LookB;   Green;       On
-    {0x6, 0x03, 0x01, {Center, Left, Right, LookR, FastL, FastR }},     //LookR;   Yellow;      On
-    {0x7, 0x04, 0x01, {Center, Left, Right,  Lost, FastL, FastR }},     //LookL;   Blue;        On
-    {0x8, 0x00, 0x01, {  Lost, Lost,  Lost,  Lost,  Lost,  Lost }},     //Lost;    Dark;        On
-    {0x9, 0x05, 0x00, {Center, Left, Right, LookF, FastL, FastR }},     //FastL;   Pink;        Off
-    {0xA, 0x06, 0x00, {Center, Left, Right, LookF, FastL, FastR }}      //FastR;   Sky Blue;    Off
+    {0x1, 0x07, 0x00, {Center, Left, Right, LookF, FastL, FastR }},     //0x0;  Center;  White;       Off        same order as states defined above^^^^^
+    {0x2, 0x01, 0x00, {Center, Left, Right, LookF, FastL, FastR }},     //0x1;  Left;    Red;         Off
+    {0x3, 0x04, 0x00, {Center, Left, Right, LookF, FastL, FastR }},     //0x2;  Right;   Blue;        Off
+    {0x4, 0x01, 0x01, {Center, Left, Right, LookB, FastL, FastR }},     //0x3;  LookF;   Red;         On
+    {0x5, 0x02, 0x01, {Center, Left, Right, LookL, FastL, FastR }},     //0x4;  LookB;   Green;       On
+    {0x6, 0x03, 0x01, {Center, Left, Right, LookR, FastL, FastR }},     //0x5;  LookR;   Yellow;      On
+    {0x7, 0x04, 0x01, {Center, Left, Right,  Lost, FastL, FastR }},     //0x6;  LookL;   Blue;        On
+    {0x8, 0x00, 0x01, {  Lost, Lost,  Lost,  Lost,  Lost,  Lost }},     //0x7;  Lost;    Dark;        On
+    {0x9, 0x05, 0x00, {Center, Left, Right, LookF, FastL, FastR }},     //0x8;  FastL;   Pink;        Off
+    {0xA, 0x06, 0x00, {Center, Left, Right, LookF, FastL, FastR }}      //0x9;  FastR;   Sky Blue;    Off
 };
 
 State_t *StatePtr;  // pointer to the current state
 uint8_t Input;
-uint8_t Output;
 volatile uint8_t data;
+uint8_t count = 0;
 
-int main(void){
+
+int main(void)
+{
   Clock_Init48MHz();
   Motor_Init();
   Reflectance_Init();
@@ -72,11 +74,15 @@ int main(void){
   EnableInterrupts();
 
   while(1)
+  {
       WaitForInterrupt();
+  }
 }
 
-void motorState(uint8_t state) {
-    switch(state){
+void motorState(uint8_t state)
+{
+    switch(state)
+    {
         case 0x1:
             Motor_Forward(3000, 3000);      //center
             break;
@@ -88,19 +94,19 @@ void motorState(uint8_t state) {
             break;
         case 0x4:
             Motor_Forward(3000, 3000);      //look forward
-            Clock_Delay1ms(50);
+            Clock_Delay1ms(200);
             break;
         case 0x5:
             Motor_Backward(3000, 3000);     //look backward
-            Clock_Delay1ms(100);
+            Clock_Delay1ms(200);
             break;
         case 0x6:
             Motor_Left(3000, 3000);         //look left
-            Clock_Delay1ms(150);
+            Clock_Delay1ms(450);
             break;
         case 0x7:
             Motor_Right(3000, 3000);        //look right
-            Clock_Delay1ms(300);
+            Clock_Delay1ms(450);
         case 0x8:
             //Clock_Delay1ms(150);
             Motor_Stop();                   //lost FUCKED UP, MAYBE WAIT A LITTLE BEFORE SHUTTING OFF MOTOR?
@@ -110,8 +116,6 @@ void motorState(uint8_t state) {
             break;
         case 0xA:
             Motor_Right(3000, 3000);        //fast turn right
-            break;
-        default:
             break;
     }
 }
@@ -133,23 +137,19 @@ void motorState(uint8_t state) {
 }*/
 
 void SysTick_Handler(void){
-    volatile static uint8_t count = 0;
-
-    if(count == 0)
+    if(count % 10 == 0)
         Reflectance_Start();
 
-    else if(count == 1) {
-                data = Reflectance_End();
-                Input = Reflectance_Position(data);
+    if(count % 10 == 1)
+    {
                 LaunchPad_Output(StatePtr->debugRGB);
                 LaunchPad_LED(StatePtr->debugLED);
+                data = Reflectance_End();
+                Input = Reflectance_Position(data);
+                motorState(StatePtr->out);
                 StatePtr = StatePtr->next[Input];
-                Output = StatePtr->out;
-                motorState(Output);
     }
 
     count++;
-    if(count == 10)
-        count = 0;
 }
 

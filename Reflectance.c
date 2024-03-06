@@ -162,27 +162,21 @@ int32_t Reflectance_Position(uint8_t data){
     //lost THIS IS FUCKED UP!!! CAUSES ROBOT TO STOP MID TRACK SOMETIMES, MAYBE CHANGE?
     if(position == 0)
         return 0x3;
-
-    //forward
-    if(position > -10000 && position < 10000)
-        return 0x0;
-
-    //left
-    if(position > 10000 && position < 20000)
-        return 0x2;
-
-    //right
-    if(position < -10000 && position > -20000)
-        return 0x1;
-
-    //hard right
-    if(position > 20000)
-        return 0x5;
-
     //hard left
     if(position < -20000)
         return 0x4;
-
+    //hard right
+    if(position > 20000)
+        return 0x5;
+    //forward
+    if(position > -10000 && position < 10000)
+        return 0x0;
+    //left
+    if(position > 10000 && position < 20000)
+        return 0x2;
+    //right
+    if(position < -10000 && position > -20000)
+        return 0x1;
     else
         return 0x3;
 }
