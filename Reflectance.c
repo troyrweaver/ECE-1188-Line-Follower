@@ -184,7 +184,7 @@ int32_t Reflectance_Position(uint8_t data){
         return 0x4;
 
     else
-        return 0x3;
+        return 0x0;
 }
 
 

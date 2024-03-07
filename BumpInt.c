@@ -50,7 +50,7 @@ policies, either expressed or implied, of the FreeBSD Project.
 #include "msp.h"
 #include "../inc/Motor.h"
 
-void (*bump)(uint8_t);
+void (*collision_handle)(uint8_t);
 
 // Initialize Bump sensors
 // Make six Port 4 pins inputs
@@ -59,7 +59,7 @@ void (*bump)(uint8_t);
 // Interrupt on falling edge (on touch)
 void BumpInt_Init(void(*task)(uint8_t)){
     // Store collision handle function
-    bump = task;
+    collision_handle = task;
 
     // Bump Switches Init //
     P4->SEL0 &= ~0xED;
@@ -84,15 +84,16 @@ void BumpInt_Init(void(*task)(uint8_t)){
 // bit 1 Bump1
 // bit 0 Bump0
 uint8_t Bump_Read(void){
+    // write this as part of Lab 14
 
-    return ~(P4->IN)&0xED; //return read values
+    return ~(P4->IN)&0xED; //return
 }
+
 
 
 // we do not care about critical section/race conditions
 // triggered on touch, falling edge
 void PORT4_IRQHandler(void){
 
-    bump(Bump_Read());
+    collision_handle(Bump_Read());
 }
-
