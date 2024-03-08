@@ -28,12 +28,12 @@ typedef const struct State State_t;
 #define FastL     &fsm[8]
 #define FastR     &fsm[9]
 
-State_t fsm[10]={ //THE ORDER OF THESE COULD MAYBE BE CHANGED?
+State_t fsm[10]={ //ORDER OF STATES
 
     {0x1, {Center, Left, Right, LookF, FastL, FastR }}, //same order as states defined above^^^^^
     {0x2, {Center, Left, Right, LookF, FastL, FastR  }},
     {0x3, {Center, Left, Right, LookF, FastL, FastR }},
-    {0x4, {Center, Left, Right, LookB, FastL, FastR }}, // lookback goes here
+    {0x4, {Center, Left, Right, LookB, FastL, FastR }},
     {0x5, {Center, Left, Right, LookL, FastL, FastR }},
     {0x6, {Center, Left, Right, LookR, FastL, FastR }},
     {0x7, {Center, Left, Right, LookL,  FastL, FastR }},
@@ -42,7 +42,7 @@ State_t fsm[10]={ //THE ORDER OF THESE COULD MAYBE BE CHANGED?
     {0xA, {Center, Left, Right, LookF, FastL, FastR  }}
 };
 
-State_t *StatePtr;  // pointer to the current state
+State_t *StatePtr;  //pointer to the current state
 uint8_t Input;
 volatile uint8_t data;
 
@@ -62,7 +62,7 @@ int main(void){
       WaitForInterrupt();
 }
 
-void motorState(uint8_t state) {
+void motorState(uint8_t state) { //WHAT MOTORS DO IN EACH STATE
     switch(state){
         case 0x1:
             Motor_Forward(3000, 3000);//center
@@ -89,7 +89,7 @@ void motorState(uint8_t state) {
             Motor_Right(2000, 2000); //look right
             Clock_Delay1ms(300);
         case 0x8:
-            Motor_Stop(); //lost FUCKED UP, MAYBE WAIT A LITTLE BEFORE SHUTTING OFF MOTOR?
+            Motor_Stop(); //lost catch all state
             break;
         case 0x9:
             Motor_Left(4000, 4000); //fast turn left
@@ -111,7 +111,7 @@ void SysTick_Handler(void){
 
     else if(count % 10 == 1) {
                 data = Reflectance_End();
-                Input = Reflectance_Position(data);
+                Input = Reflectance_Position(data); //READ IN REFLECTANCE DATA AND CHANGE STATE
                 StatePtr = StatePtr->next[Input];
                 motorState(StatePtr->out);
     }
@@ -120,6 +120,6 @@ void SysTick_Handler(void){
 
 
 void collision(uint8_t bump){
-    Motor_Stop();
+    Motor_Stop(); //STOP IF BUMP IS DETECTED
 }
 
