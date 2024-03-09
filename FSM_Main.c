@@ -9,7 +9,7 @@
 
 void motorState(uint8_t state);
 void SysTick_Handler(void);
-//void bump(uint8_t);
+void collision(uint8_t);
 
 struct State {
   uint8_t out;                  //2-bit output
@@ -30,31 +30,21 @@ typedef const struct State State_t;
 #define FastL     &fsm[8]
 #define FastR     &fsm[9]
 
-//Can map RGB LEDS to track states
-// dark --- 0
-// red R-- 0x01
-// blue --B 0x04
-// green -G- 0x02
-// yellow RG- 0x03
-// sky blue -GB 0x06
-// white RGB 0x07
-// pink R-B 0x05
+State_t fsm[10]={ //ORDER OF STATES
 
-State_t fsm[10]={ //THE ORDER OF THESE COULD MAYBE BE CHANGED?
-
-    {0x1, 0x07, 0x00, {Center, Left, Right, LookF, FastL, FastR }},     //0x0;  Center;  White;       Off        same order as states defined above^^^^^
-    {0x2, 0x01, 0x00, {Center, Left, Right, LookF, FastL, FastR }},     //0x1;  Left;    Red;         Off
-    {0x3, 0x04, 0x00, {Center, Left, Right, LookF, FastL, FastR }},     //0x2;  Right;   Blue;        Off
-    {0x4, 0x01, 0x01, {Center, Left, Right, LookB, FastL, FastR }},     //0x3;  LookF;   Red;         On
-    {0x5, 0x02, 0x01, {Center, Left, Right, LookL, FastL, FastR }},     //0x4;  LookB;   Green;       On
-    {0x6, 0x03, 0x01, {Center, Left, Right, LookR, FastL, FastR }},     //0x5;  LookR;   Yellow;      On
-    {0x7, 0x04, 0x01, {Center, Left, Right,  Lost, FastL, FastR }},     //0x6;  LookL;   Blue;        On
-    {0x8, 0x00, 0x01, {  Lost, Lost,  Lost,  Lost,  Lost,  Lost }},     //0x7;  Lost;    Dark;        On
-    {0x9, 0x05, 0x00, {Center, Left, Right, LookF, FastL, FastR }},     //0x8;  FastL;   Pink;        Off
-    {0xA, 0x06, 0x00, {Center, Left, Right, LookF, FastL, FastR }}      //0x9;  FastR;   Sky Blue;    Off
+    {0x1, {Center, Left, Right, LookF, FastL, FastR }}, //same order as states defined above^^^^^
+    {0x2, {Center, Left, Right, LookF, FastL, FastR  }},
+    {0x3, {Center, Left, Right, LookF, FastL, FastR }},
+    {0x4, {Center, Left, Right, LookB, FastL, FastR }},
+    {0x5, {Center, Left, Right, LookL, FastL, FastR }},
+    {0x6, {Center, Left, Right, LookR, FastL, FastR }},
+    {0x7, {Center, Left, Right, LookL,  FastL, FastR }},
+    {0x8, {Lost,   Lost, Lost,  Lost,  Lost, Lost }},
+    {0x9, {Center, Left, Right, LookF, FastL, FastR }},
+    {0xA, {Center, Left, Right, LookF, FastL, FastR  }}
 };
 
-State_t *StatePtr;  // pointer to the current state
+State_t *StatePtr;  //pointer to the current state
 uint8_t Input;
 volatile uint8_t data;
 uint8_t count = 0;
@@ -67,7 +57,7 @@ int main(void)
   Reflectance_Init();
   SysTick_Init(48000, 2);
   LaunchPad_Init();
-//  BumpInt_Init(&bump);
+  BumpInt_Init(&collision);
 
   StatePtr = Center;
 
@@ -79,10 +69,8 @@ int main(void)
   }
 }
 
-void motorState(uint8_t state)
-{
-    switch(state)
-    {
+void motorState(uint8_t state) { //WHAT MOTORS DO IN EACH STATE
+    switch(state){
         case 0x1:
             Motor_Forward(3000, 3000);      //center
             break;
@@ -101,55 +89,44 @@ void motorState(uint8_t state)
             Clock_Delay1ms(200);
             break;
         case 0x6:
-            Motor_Left(3000, 3000);         //look left
-            Clock_Delay1ms(450);
+            Motor_Left(2000, 2000); //look left
+            Clock_Delay1ms(300);
             break;
         case 0x7:
-            Motor_Right(3000, 3000);        //look right
-            Clock_Delay1ms(450);
+            Motor_Right(2000, 2000); //look right
+            Clock_Delay1ms(300);
         case 0x8:
-            //Clock_Delay1ms(150);
-            Motor_Stop();                   //lost FUCKED UP, MAYBE WAIT A LITTLE BEFORE SHUTTING OFF MOTOR?
+            Motor_Stop(); //lost catch all state
             break;
         case 0x9:
-            Motor_Left(3000, 3000);         //fast turn left
+            Motor_Left(4000, 4000); //fast turn left
             break;
         case 0xA:
-            Motor_Right(3000, 3000);        //fast turn right
+            Motor_Right(4000, 4000); //fast turn right
+            break;
+        default:
             break;
     }
 }
 
-//CANT GET THIS TO WORK, I AM CLOSE!!! BUMP SENSORS HAVE TO WORK AND STOP MOTOR
-/*void bump(uint8_t bump){ FUCKED UP!!!
-    switch(bump){
-    case BIT0:
-    case BIT2:
-    case BIT3:
-    case BIT5:
-    case BIT6:
-    case BIT7:
-        Motor_Stop();
-        break;
-    default:
-        break;
-    }
-}*/
 
 void SysTick_Handler(void){
+    volatile static uint8_t count = 0;
+
     if(count % 10 == 0)
         Reflectance_Start();
 
-    if(count % 10 == 1)
-    {
-                LaunchPad_Output(StatePtr->debugRGB);
-                LaunchPad_LED(StatePtr->debugLED);
+    else if(count % 10 == 1) {
                 data = Reflectance_End();
-                Input = Reflectance_Position(data);
-                motorState(StatePtr->out);
+                Input = Reflectance_Position(data); //READ IN REFLECTANCE DATA AND CHANGE STATE
                 StatePtr = StatePtr->next[Input];
+                motorState(StatePtr->out);
     }
-
     count++;
+}
+
+
+void collision(uint8_t bump){
+    Motor_Stop(); //STOP IF BUMP IS DETECTED
 }
 

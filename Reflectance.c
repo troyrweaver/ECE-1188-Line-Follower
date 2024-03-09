@@ -155,11 +155,7 @@ int32_t Reflectance_Position(uint8_t data){
 
     position = numerator/denominator;       //answer of the weighted average equation
 
-    //THESE IF STATEMENTS APPARENTLY USE LOTS OF OVERHEAD, I WAS TOLD NOT TO USE THIS FUNCTION AT ALL?
-    //IDK IF THATS POSSIBLE, MAYBE CHANGE? IF NOT, WHO CARES!
-    //VALUES COULD BE TUNED BETTER FORSURE!!!!!!
-
-    //lost THIS IS FUCKED UP!!! CAUSES ROBOT TO STOP MID TRACK SOMETIMES, MAYBE CHANGE?
+    //IF STATEMENTS TO CHANGE THE POSITION OF FSM BASED ON SENSOR DATA
     if(position == 0)
         return 0x3;
     //hard left
@@ -178,7 +174,7 @@ int32_t Reflectance_Position(uint8_t data){
     if(position < -10000 && position > -20000)
         return 0x1;
     else
-        return 0x3;
+        return 0x0;
 }
 
 
